@@ -61,6 +61,14 @@ module.exports = function(grunt) {
         }
       }
     },
+    forever: {
+      server1: {
+        options: {
+          index: 'app.js',
+          logDir: 'logs'
+        }
+      }
+    },
     watch: {
       clientJS: {
          files: [
@@ -206,8 +214,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-concurrent');
   grunt.loadNpmTasks('grunt-nodemon');
   grunt.loadNpmTasks('grunt-newer');
+  grunt.loadNpmTasks('grunt-forever');
 
   grunt.registerTask('default', ['copy:vendor', 'newer:uglify', 'newer:less', 'concurrent']);
+  grunt.registerTask('deploy', ['copy:vendor', 'newer:uglify', 'newer:less', 'forever:server']);
   grunt.registerTask('build', ['copy:vendor', 'uglify', 'less']);
   grunt.registerTask('lint', ['jshint']);
 };
