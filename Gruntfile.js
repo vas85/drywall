@@ -217,7 +217,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-forever');
 
   grunt.registerTask('default', ['copy:vendor', 'newer:uglify', 'newer:less', 'concurrent']);
-  grunt.registerTask('deploy', ['copy:vendor', 'newer:uglify', 'newer:less', 'forever:server']);
+  grunt.registerTask('deploy', ['copy:vendor', 'newer:uglify', 'newer:less', 'forever']);
+  grunt.registerTask('start', ['forever::start']);  
+  grunt.registerTask('stop', ['forever::stop']);  
   grunt.registerTask('build', ['copy:vendor', 'uglify', 'less']);
   grunt.registerTask('lint', ['jshint']);
 };
