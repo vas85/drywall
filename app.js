@@ -5,19 +5,36 @@ var config = require('./config'),
     express = require('express'),
     mongoStore = require('connect-mongo')(express),
     http = require('http'),
+    https = require('https'),
     path = require('path'),
     passport = require('passport'),
     mongoose = require('mongoose'),
+    fs = require('fs'),
     helmet = require('helmet');
+
+//create httpApp to redirect to https
+var httpApp = express();
+httpApp.set('port', config.port);
+httpApp.get("*", function (req, res, next) {
+    res.redirect("https://" + req.headers.host + req.path);
+});
+
+http.createServer(httpApp).listen(httpApp.get('port'), function() {
+    console.log('Express HTTP server listening on port ' + httpApp.get('port'));
+});
 
 //create express app
 var app = express();
+
+var privateKey  = fs.readFileSync('sslcert/server.key', 'utf8');
+var certificate = fs.readFileSync('sslcert/server.crt', 'utf8');
+var credentials = {key: privateKey, cert: certificate};
 
 //keep reference to config
 app.config = config;
 
 //setup the web server
-app.server = http.createServer(app);
+app.server = https.createServer(credentials, app);
 
 //setup mongoose
 app.db = mongoose.createConnection(config.mongodb.uri);
@@ -36,7 +53,7 @@ app.sessionStore = new mongoStore({ url: config.mongodb.uri });
 app.configure(function(){
   //settings
   app.disable('x-powered-by');
-  app.set('port', config.port);
+  app.set('sport', config.sport);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('strict routing', true);
@@ -123,6 +140,7 @@ app.utility.slugify = require('drywall-slugify');
 app.utility.workflow = require('drywall-workflow');
 
 //listen up
-app.server.listen(app.get('port'), function(){
+app.server.listen(app.get('sport'), function(){
   //and... we're live
+    console.log('Express HTTPS server listening on port ' + app.get('sport'));
 });
