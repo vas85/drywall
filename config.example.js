@@ -1,6 +1,7 @@
 'use strict';
 
-exports.port = process.env.PORT || 3000;
+exports.port = process.env.PORT || 8080;
+exports.sport = process.env.SPORT || 8081;
 exports.mongodb = {
   uri: process.env.MONGOLAB_URI || process.env.MONGOHQ_URL || 'localhost/drywall'
 };
